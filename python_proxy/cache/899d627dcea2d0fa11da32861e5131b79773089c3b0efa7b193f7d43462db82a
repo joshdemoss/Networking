@@ -1,0 +1,27 @@
+HTTP/1.0 200 OK
+Date: Thu, 30 Jan 2020 07:41:52 GMT
+Content-Type: text/html; charset=utf-8
+Connection: close
+Server: nginx/1.10.1
+X-Adblock-Key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAL/3/SrV7P8AsTHMFSpPmYbyv2PkACHwmG9Z+1IFZq3vA54IN7pQcGnhgNo+8SN9r/KtUWCb9OPqTfWM1N4w/EUCAwEAAQ==_GNA0CPBtuAevdHUoQGRIkX3bhvg4C+8cG3FMMuPZBWyX3wpVkyY92BmUehbVBzVLbWA7bY5z0U3Z49KDhFWjyA==
+Access-Control-Allow-Origin: *
+Access-Control-Allow-Methods: *
+Access-Control-Request-Method: *
+Access-Control-Allow-Headers: *
+Access-Control-Max-Age: 86400
+X-UA-Compatible: IE=Edge,chrome=1
+ETag: "84493672acfcedb70ea3fcd2d73d6d9a"
+Cache-Control: max-age=0, private, must-revalidate
+Set-Cookie: _digiadmin2_session=BAh7B0kiD3Nlc3Npb25faWQGOgZFVEkiJTE4YzA0MzYxYzAzZTYyMGE3MzI0MjA5ZTgxZjJiODYwBjsAVEkiEF9jc3JmX3Rva2VuBjsARkkiMXNwUjZpZEZnL2crZ3RkZUJLRWdURWxFZDFMQ2VVSjNWVWxqMWd0dEs0K1E9BjsARg%3D%3D--d75748ce9fec8308974ca7a9c16f5b306d8953cd; path=/; expires=Thu, 30-Jan-2020 19:41:52 GMT; HttpOnly
+X-Request-Id: 3ab643c05572594f54fad54029be5a67
+X-Runtime: 0.087346
+X-Rack-Cache: miss
+
+<!DOCTYPE html>
+<html data-adblockkey='MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAL/3/SrV7P8AsTHMFSpPmYbyv2PkACHwmG9Z+1IFZq3vA54IN7pQcGnhgNo+8SN9r/KtUWCb9OPqTfWM1N4w/EUCAwEAAQ==_GNA0CPBtuAevdHUoQGRIkX3bhvg4C+8cG3FMMuPZBWyX3wpVkyY92BmUehbVBzVLbWA7bY5z0U3Z49KDhFWjyA=='>
+<head>
+
+
+<meta charset='UTF-8'>
+<title>Wheat.com</title>
+<link href='data:image/png;base64,iVBORw0KGgo=' rel='icon' type='im
