@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# Dr. Pohly
+
 import threading
 
 

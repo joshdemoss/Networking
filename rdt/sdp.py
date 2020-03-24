@@ -1,3 +1,7 @@
+#!/usr/bin/env python3
+# Dr. Pohly
+# 
+# A sample class to demonstrate some client server communication
 from network import Protocol, DatagramSocket
 
 

@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# Joshua DeMoss
+# 
+# A simple test class to check some functionality of rdt.py
 
 import sys
 import os.path
@@ -40,39 +43,6 @@ class MyTest(unittest.TestCase):
         self.assertEqual(self.s2.recv(), b'')
         s.send(b' world')
         self.assertEqual(self.s2.recv(), b' world')
-
-
-    def test_twoway(self):
-        pass
-        # self.s1.sendto(b'hello', '192.168.10.2')
-        # self.s1.sendto(b'', '192.168.10.2')
-        # self.s1.sendto(b' world', '192.168.10.2')
-        # self.s2.sendto(b'hi', '192.168.10.1')
-        # self.s2.sendto(b'', '192.168.10.1')
-        # self.s2.sendto(b' planet', '192.168.10.1')
-
-        # self.assertEqual(self.s2.recvfrom(), (b'hello', '192.168.10.1'))
-        # self.assertEqual(self.s2.recvfrom(), (b'', '192.168.10.1'))
-        # self.assertEqual(self.s2.recvfrom(), (b' world', '192.168.10.1'))
-        # self.assertEqual(self.s1.recvfrom(), (b'hi', '192.168.10.2'))
-        # self.assertEqual(self.s1.recvfrom(), (b'', '192.168.10.2'))
-        # self.assertEqual(self.s1.recvfrom(), (b' planet', '192.168.10.2'))
-
-    def test_broadcast(self):
-        pass
-        # self.s1.sendto(b'hello', '192.168.10.2')
-        # self.s1.sendto(b'', '192.168.10.2')
-        # self.s1.sendto(b' world', '192.168.10.2')
-
-        # self.assertEqual(self.s2.recvfrom(), (b'hello', '192.168.10.1'))
-        # self.assertEqual(self.s2.recvfrom(), (b'', '192.168.10.1'))
-
-        # self.assertEqual(self.s2a.recvfrom(), (b'hello', '192.168.10.1'))
-
-        # self.assertEqual(self.s2.recvfrom(), (b' world', '192.168.10.1'))
-
-        # self.assertEqual(self.s2a.recvfrom(), (b'', '192.168.10.1'))
-        # self.assertEqual(self.s2a.recvfrom(), (b' world', '192.168.10.1'))
 
 if __name__ == '__main__':
     unittest.main()

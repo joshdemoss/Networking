@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# Dr. Pohly
+# 
+# Used to test that the newtork class is running properly
 
 import sys
 import os.path
