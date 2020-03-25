@@ -15,5 +15,3 @@ To aid in testing, the protocol runs not on a real network but on a network simu
 provides fine-grained control over packet corruption and loss.
 
 Implemented files: rdt.py
-
-
