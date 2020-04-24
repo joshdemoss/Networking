@@ -15,6 +15,11 @@ import time
 # Reserved protocol number for experiments; see RFC 3692
 IPPROTO_RDT = 0xfe
 
+# This socket class is used in conjuction with the RDTProtocol class below it. 
+# The purpose of the socket class is to provide functionality for typical socket functions
+# that can opperate with the stop-and-wait protol, reliable data transfer. Main functionality
+# of this class lies in the send function, which waits for a ACK message to make sure its sent
+# message was recieved, and both the accept anad connect functions which establish connections.
 class RDTSocket(StreamSocket):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -43,12 +48,7 @@ class RDTSocket(StreamSocket):
         self.flag = 0
 
         # Used to inform the "sending" socket whether it it's sent data was recieved
-        self.acked = False
-
-    
-    # Inherited methods:
-        # deliver() -  adds to buffer
-        # recv(n) -  rectrives/ returns up to n bytes from buffer
+        self.acked = Falses
     
     # Binds this socket to a port number
     def bind(self, port): # only new definition - the rest are overrides of super class
@@ -110,30 +110,39 @@ class RDTSocket(StreamSocket):
             raise StreamSocket.NotConnected
 
 
-        if self.flag == 1 or self.flag == 2: # If this packet is a SYN or SYN ACK packet
+        # If this packet is a SYN or SYN ACK packet
+        if self.flag == 1 or self.flag == 2: 
             seqNum = 0
-        else: #Packet is an ACK or reg msg
-            seqNum = self.proto.connSockets[(self.dPort, self.sPort, self.dIP)][1] # get the cur seq num of the socket
         
+        # else if Packet is an ACK or reg msg
+        else: 
+            # get the cur seq num of the socket
+            seqNum = self.proto.connSockets[(self.dPort, self.sPort, self.dIP)][1] 
+        
+        # Calculate the checksum and then create the header (20 bytes)
         checksum = self.proto.checksum(self.sPort, self.dPort, seqNum, self.flag, data)   
-        hdr = self.proto.packHeader(self.sPort, self.dPort, seqNum, self.flag, checksum) # 20 bytes of data
+        hdr = self.proto.packHeader(self.sPort, self.dPort, seqNum, self.flag, checksum) 
 
-        
-        if self.flag == 2 or self.flag == 3: # If packet is a SYN ACK or reg ACK
+        # If packet is a SYN ACK or reg ACK then send it without RDT
+        if self.flag == 2 or self.flag == 3: 
             self.output(hdr+data, self.dIP)
+        # otherwise provide stop-and-wait RDT
         else:
             # Wait till this socket recieves an ACK before exiting the fun call
             while not self.acked:
                 self.output(hdr+data, self.dIP)
                 start = time.time()
                 while time.time() - start < .01:
+                    # The RDT protocl will update this value when it recieves an ACK see input()
                     if self.acked:
                         break
             self.acked = False
-       
-        if self.flag != 1: # Update the sequence number afterwards
+
+        # Sequence numbers are used to gaurd against duplicate messages
+        if self.flag != 1: 
             self.proto.connSockets[(self.dPort, self.sPort, self.dIP)][1] = 1 - seqNum
 
+    # Helper function used to reduce code associated with sending an ack
     def sendACK(self, flag):
         self.flag = flag
         self.send(b'')
@@ -143,6 +152,16 @@ class RDTSocket(StreamSocket):
 # ----------------------------------------------------------------------------------------------------------------------------------------------------
 
 
+# This is a custom RDT protocol. It is stop and wait, meaning each host waits until it recieves
+# a rsponse from the device it is communicating with before continuing to send more data. IF the
+# host waits more than 10 miliseconds, it resends the message it sent assuming the device it is
+# communicating with never recieved its earlier message. The stop and wait functionality is
+# implemented in the RDT socket above, specifically in the send function. The main functionality
+# of this class is in input which decides what should be done when the host recieves data.
+#
+# The main functionality provided by this class is in input which parses packets recieved at the
+# transport layer, demultiplexes the message based on the custom header, and then performs the appropriate
+# actions based on other header information.
 class RDTProtocol(Protocol):
     # inherits host from Protocol
     PROTO_ID = IPPROTO_RDT
@@ -163,8 +182,12 @@ class RDTProtocol(Protocol):
     def input(self, seg, host):
         sPort, dPort, seqNum, flag, checksum, data = self.parseRDT(seg)
 
+        # Check for corruption
         if checksum == self.checksum(sPort, dPort, seqNum, flag, data):
-            if flag == 0: #if its a regular message
+            
+            # if its a regular message
+            if flag == 0: 
+                # Demux by fetching the right socket
                 if (sPort, dPort, host) in self.connSockets:
                     correctSocket = self.connSockets[(sPort, dPort, host)][0]
                     if seqNum == self.connSockets[(sPort, dPort, host)][1]:
@@ -173,9 +196,13 @@ class RDTProtocol(Protocol):
                     else:
                         self.connSockets[(sPort, dPort, host)][1] = 1 - self.connSockets[(sPort, dPort, host)][1]
                         correctSocket.sendACK(3)
-            else: # SYN or ACK message
+            
+            # If it is a SYN or ACK message
+            else: 
                 if dPort in self.usedPorts:
                     correctSocket = self.usedPorts[dPort][1]
+                    
+                    # Setting up a connection
                     if flag == 1: # SYN request
                         if ((host, sPort) not in list(correctSocket.requests.queue)) and ((sPort, dPort, host) not in self.connSockets): #not in queue or connSockets
                             correctSocket.requests.put((host, sPort)) #
@@ -183,11 +210,13 @@ class RDTProtocol(Protocol):
                             correctSocket = self.connSockets[(sPort, dPort, host)][0]
                             self.connSockets[(sPort, dPort, host)][1] = 1 - self.connSockets[(sPort, dPort, host)][1] #get the opposite sequence number of that connection
                             correctSocket.sendACK(2) #use that sequence number to send an ACK
-                            
-                    elif flag == 2: # SYN ACK
+                    
+                    # Responding to a connection request (aka SYN Request)        
+                    elif flag == 2:
                         self.connSockets[(sPort, dPort, host)] = [correctSocket, 1]
                         correctSocket.acked = True # will be set false again by send
                     
+                    # Responding to normal messages after connection is already established
                     elif (flag == 3) and ((sPort, dPort, host) in self.connSockets) and (seqNum == self.connSockets[(sPort, dPort, host)][1]):
                         correctSocket = self.connSockets[(sPort, dPort, host)][0]
                         correctSocket.acked = True # Notify the sender that it recieved an ACK by setting acked to true
