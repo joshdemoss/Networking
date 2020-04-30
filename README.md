@@ -1,4 +1,4 @@
-# Networking Projects:
+# Networking Project Descriptions:
 
 # Project 1 - Python Proxy Redux
 File: proxy.py
