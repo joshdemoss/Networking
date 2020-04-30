@@ -3,7 +3,7 @@
 # Project 2 - RDT
 # 3/24/20
 # 
-# Purpose: Construct a Reliable Data Transfer Protocol from Scratch
+# Purpose: Construct a Reliable Data Transfer Protocol from scratch
 # using the given network simulator
 
 
