@@ -1,5 +1,5 @@
 # RDT
-File: rdt.py
+Main File: rdt.py
 
 The purpose of this project is to design a custom transport layer protocol that will providing reliable communication over an 
 unreliable medium. This was done by implementing standard protocol and socket functions for a reliable transport protocol 
